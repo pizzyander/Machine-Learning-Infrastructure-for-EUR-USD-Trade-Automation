@@ -1,6 +1,11 @@
 import requests
+import json
 
-TOKEN = "7846836503:AAHPPkb8pNHsEGL4d13es_nrbf7qWMBtBQQ"
+# Load credentials
+with open('settings.json', 'r') as file:
+    settings = json.load(file)
+
+TOKEN = settings.get('telegram_bot_token')
 url = f"https://api.telegram.org/bot{TOKEN}/getUpdates"
 
 response = requests.get(url)

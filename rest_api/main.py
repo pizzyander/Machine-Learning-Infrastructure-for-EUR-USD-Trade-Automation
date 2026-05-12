@@ -4,7 +4,6 @@ import numpy as np
 from pydantic import BaseModel
 from keras.saving import register_keras_serializable
 import joblib
-import sklearn
 
 # Register custom loss function if needed
 @register_keras_serializable()
