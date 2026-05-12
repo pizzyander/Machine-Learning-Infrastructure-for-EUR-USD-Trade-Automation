@@ -26,7 +26,7 @@ This project explores the development of a modular machine learning-driven tradi
 # System Architecture
 
 ```text
-Market Data
+Market Data (MetaApi)
      ↓
 Training Pipeline
      ↓
@@ -54,6 +54,10 @@ Trade Monitoring & Telegram Alerts
 * TensorFlow / Keras
 * NumPy
 * Pandas
+* Pickle
+* SciKit Learn
+* pydantic
+* 
 
 ## Infrastructure
 
@@ -76,10 +80,31 @@ Trade Monitoring & Telegram Alerts
 
 ```bash
 ├── training/
+│   ├── Dockerfile
+│   ├── training.py
+│   └── requirements.txt
+│
 ├── models/
+│   ├── data.csv1
+│   ├── data.csv2
+│   ├── gru.model.keras
+│   ├── merged_data.csv
+│   ├── X_scaler.pickle
+│   └── y_scaler.pickle
+│
 ├── rest_api/
+│   ├── Dockerfile
+│   ├── main.py
+│   └── requirements.txt
+│
 ├── trade_execution/
+│   ├── Dockerfile
+│   ├── trade.py
+│   └── requirements.txt
+│
 ├── hyperparameter_tuning/
+│   └── trial_00/...
+│
 ├── docker-compose.yml
 ├── Kubernetes.yaml
 ├── telegram.py
@@ -91,19 +116,17 @@ Trade Monitoring & Telegram Alerts
 
 ### training/
 
-Contains machine learning training scripts and preprocessing workflows for financial time-series forecasting.
-
+Contains a scripts that retrieves historical data from yFinance, cleans the data, builds the model and stores it in the model registry.
 ### models/
 
-Stores trained machine learning models and serialized model artifacts.
-
+Stores the trained machine learning model which is updated after every scheduled training session. also containes the scalers and presaved data files which are joined with recent data for training.
 ### rest_api/
 
-REST API services responsible for serving live predictions to the execution engine.
+REST API (FastApi) services responsible for serving live predictions to the execution engine.
 
 ### trade_execution/
 
-Handles automated trade execution logic, order management, and trailing stop-loss operations.
+Handles automated trade execution logic, order management, and trailing stop-loss operations on MetaApi.
 
 ### hyperparameter_tuning/
 
@@ -188,16 +211,16 @@ This initializes:
 kubectl apply -f Kubernetes.yaml
 ```
 
-The application supports deployment using Kubernetes clusters for scalable container orchestration.
+The application supports deployment using Kubernetes clusters (GKE) for scalable container orchestration.
 
 ---
 
 # Workflow
 
-1. Market data is collected and preprocessed.
+1. Market data is collected on yFinance and preprocessed.
 2. GRU-based models are trained using time-series forecasting techniques.
-3. Trained models are served through REST API endpoints.
-4. Trade execution services consume prediction outputs.
+3. Trained models are served through REST API (FastApi) endpoints.
+4. Trade execution services consume prediction outputs and places trade on MetaApi through MT5 Api.
 5. Orders are managed and monitored automatically.
 6. Telegram notifications provide execution and monitoring updates.
 
